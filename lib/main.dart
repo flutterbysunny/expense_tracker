@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'core/theme/app_theme.dart';
 import 'data/models/expense_model.dart';
 import 'data/repositories/expense_repository.dart';
 import 'features/expense_list/bloc/expense_bloc.dart';
@@ -11,6 +12,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
   Hive.registerAdapter(ExpenseModelAdapter());
+  Hive.registerAdapter(TransactionTypeAdapter());
   await Hive.openBox<ExpenseModel>(ExpenseRepository.boxName);
 
   runApp(const MyApp());
@@ -26,10 +28,9 @@ class MyApp extends StatelessWidget {
       child: MaterialApp(
         title: 'Expense Tracker',
         debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          colorSchemeSeed: Colors.indigo,
-          useMaterial3: true,
-        ),
+        theme: AppTheme.darkTheme,
+        darkTheme: AppTheme.darkTheme,
+        themeMode: ThemeMode.dark,
         home: const HomeScreen(),
       ),
     );

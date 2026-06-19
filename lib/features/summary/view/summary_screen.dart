@@ -7,6 +7,7 @@ import '../bloc/summary_bloc.dart';
 import '../bloc/summary_event.dart';
 import '../bloc/summary_state.dart';
 import '../widgets/category_pie_chart.dart';
+import '../widgets/weekly_trend_chart.dart';
 
 class SummaryScreen extends StatelessWidget {
   const SummaryScreen({super.key});
@@ -35,6 +36,22 @@ class SummaryScreen extends StatelessWidget {
               return ListView(
                 padding: const EdgeInsets.all(16),
                 children: [
+                  Text(
+                    'Last 7 Days',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  WeeklyTrendChart(last7DaysTotals: state.last7DaysTotals),
+                  const SizedBox(height: 24),
+                  Text(
+                    'By Category',
+                    style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
                   CategoryPieChart(
                     categoryTotals: state.categoryTotals,
                     totalAmount: state.totalAmount,
