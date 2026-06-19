@@ -7,7 +7,9 @@ import '../../expense_list/bloc/expense_bloc.dart';
 import '../../expense_list/bloc/expense_event.dart';
 
 class AddExpenseScreen extends StatefulWidget {
-  const AddExpenseScreen({super.key});
+  final ExpenseModel? existingExpense; // null = Add mode, non-null = Edit mode
+
+  const AddExpenseScreen({super.key, this.existingExpense});
 
   @override
   State<AddExpenseScreen> createState() => _AddExpenseScreenState();
@@ -15,10 +17,24 @@ class AddExpenseScreen extends StatefulWidget {
 
 class _AddExpenseScreenState extends State<AddExpenseScreen> {
   final _formKey = GlobalKey<FormState>();
-  final _titleController = TextEditingController();
-  final _amountController = TextEditingController();
-  String _selectedCategory = CategoryData.categories.first;
-  DateTime _selectedDate = DateTime.now();
+  late final TextEditingController _titleController;
+  late final TextEditingController _amountController;
+  late String _selectedCategory;
+  late DateTime _selectedDate;
+
+  bool get _isEditMode => widget.existingExpense != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final existing = widget.existingExpense;
+    _titleController = TextEditingController(text: existing?.title ?? '');
+    _amountController = TextEditingController(
+      text: existing != null ? existing.amount.toString() : '',
+    );
+    _selectedCategory = existing?.category ?? CategoryData.categories.first;
+    _selectedDate = existing?.date ?? DateTime.now();
+  }
 
   @override
   void dispose() {
@@ -30,15 +46,25 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   void _submit() {
     if (!_formKey.currentState!.validate()) return;
 
-    final expense = ExpenseModel(
-      id: const Uuid().v4(),
-      title: _titleController.text.trim(),
-      amount: double.parse(_amountController.text),
-      category: _selectedCategory,
-      date: _selectedDate,
-    );
+    if (_isEditMode) {
+      final updated = widget.existingExpense!.copyWith(
+        title: _titleController.text.trim(),
+        amount: double.parse(_amountController.text),
+        category: _selectedCategory,
+        date: _selectedDate,
+      );
+      context.read<ExpenseBloc>().add(UpdateExpense(updated));
+    } else {
+      final newExpense = ExpenseModel(
+        id: const Uuid().v4(),
+        title: _titleController.text.trim(),
+        amount: double.parse(_amountController.text),
+        category: _selectedCategory,
+        date: _selectedDate,
+      );
+      context.read<ExpenseBloc>().add(AddExpense(newExpense));
+    }
 
-    context.read<ExpenseBloc>().add(AddExpense(expense));
     Navigator.pop(context);
   }
 
@@ -57,7 +83,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Add Expense')),
+      appBar: AppBar(title: Text(_isEditMode ? 'Edit Expense' : 'Add Expense')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -115,7 +141,7 @@ class _AddExpenseScreenState extends State<AddExpenseScreen> {
               FilledButton(
                 onPressed: _submit,
                 style: FilledButton.styleFrom(padding: const EdgeInsets.all(16)),
-                child: const Text('Save Expense'),
+                child: Text(_isEditMode ? 'Update Expense' : 'Save Expense'),
               ),
             ],
           ),

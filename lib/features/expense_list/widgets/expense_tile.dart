@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+
 import '../../../core/constants/category_data.dart';
 import '../../../data/models/expense_model.dart';
+import '../../add_expense/view/add_expense_screen.dart';
 
 class ExpenseTile extends StatelessWidget {
   final ExpenseModel expense;
@@ -26,18 +28,28 @@ class ExpenseTile extends StatelessWidget {
       onDismissed: (_) => onDelete(),
       child: ListTile(
         leading: CircleAvatar(
-          backgroundColor: CategoryData.getColor(expense.category).withOpacity(0.15),
+          backgroundColor: CategoryData.getColor(expense.category).withOpacity(
+              0.15),
           child: Icon(
             CategoryData.getIcon(expense.category),
             color: CategoryData.getColor(expense.category),
           ),
         ),
         title: Text(expense.title),
-        subtitle: Text('${expense.category} • ${dateFormatter.format(expense.date)}'),
+        subtitle: Text(
+            '${expense.category} • ${dateFormatter.format(expense.date)}'),
         trailing: Text(
           formatter.format(expense.amount),
           style: const TextStyle(fontWeight: FontWeight.bold),
         ),
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (_) => AddExpenseScreen(existingExpense: expense),
+            ),
+          );
+        },
       ),
     );
   }
