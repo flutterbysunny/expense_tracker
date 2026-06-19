@@ -20,6 +20,15 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Expense Tracker'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              showSearch(
+                context: context,
+                delegate: _ExpenseSearchDelegate(context.read<ExpenseBloc>()),
+              );
+            },
+          ),
+          IconButton(
             icon: const Icon(Icons.pie_chart_outline),
             onPressed: () {
               Navigator.push(
@@ -154,6 +163,61 @@ class _CategoryFilterChips extends StatelessWidget {
           context.read<ExpenseBloc>().add(FilterByCategory(value));
         },
       ),
+    );
+  }
+}
+
+class _ExpenseSearchDelegate extends SearchDelegate<void> {
+  final ExpenseBloc expenseBloc;
+  _ExpenseSearchDelegate(this.expenseBloc);
+
+  @override
+  List<Widget> buildActions(BuildContext context) => [
+    IconButton(
+      icon: const Icon(Icons.clear),
+      onPressed: () => query = '',
+    ),
+  ];
+
+  @override
+  Widget buildLeading(BuildContext context) => IconButton(
+    icon: const Icon(Icons.arrow_back),
+    onPressed: () {
+      expenseBloc.add(LoadExpenses()); // reset to full list on close
+      close(context, null);
+    },
+  );
+
+  @override
+  Widget buildResults(BuildContext context) => _buildSearchResults();
+
+  @override
+  Widget buildSuggestions(BuildContext context) {
+    expenseBloc.add(SearchExpense(query));
+    return _buildSearchResults();
+  }
+
+  Widget _buildSearchResults() {
+    return BlocBuilder<ExpenseBloc, ExpenseState>(
+      bloc: expenseBloc,
+      builder: (context, state) {
+        if (state is ExpenseLoaded) {
+          if (state.expenses.isEmpty) {
+            return const Center(child: Text('No matching expenses'));
+          }
+          return ListView.builder(
+            itemCount: state.expenses.length,
+            itemBuilder: (context, index) {
+              final expense = state.expenses[index];
+              return ExpenseTile(
+                expense: expense,
+                onDelete: () => expenseBloc.add(DeleteExpense(expense.id)),
+              );
+            },
+          );
+        }
+        return const SizedBox.shrink();
+      },
     );
   }
 }
