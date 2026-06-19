@@ -27,6 +27,7 @@ class ExpenseTile extends StatelessWidget {
       ),
       onDismissed: (_) => onDelete(),
       child: ListTile(
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 2),
         leading: CircleAvatar(
           backgroundColor: CategoryData.getColor(expense.category).withOpacity(
               0.15),

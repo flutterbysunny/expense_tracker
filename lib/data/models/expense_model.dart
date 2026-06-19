@@ -2,6 +2,14 @@ import 'package:hive/hive.dart';
 
 part 'expense_model.g.dart';
 
+@HiveType(typeId: 1)
+enum TransactionType {
+  @HiveField(0)
+  income,
+  @HiveField(1)
+  expense,
+}
+
 @HiveType(typeId: 0)
 class ExpenseModel extends HiveObject {
   @HiveField(0)
@@ -22,6 +30,9 @@ class ExpenseModel extends HiveObject {
   @HiveField(5)
   final String? note;
 
+  @HiveField(6)
+  final TransactionType type;
+
   ExpenseModel({
     required this.id,
     required this.title,
@@ -29,6 +40,7 @@ class ExpenseModel extends HiveObject {
     required this.category,
     required this.date,
     this.note,
+    this.type = TransactionType.expense,
   });
 
   ExpenseModel copyWith({
@@ -38,6 +50,7 @@ class ExpenseModel extends HiveObject {
     String? category,
     DateTime? date,
     String? note,
+    TransactionType? type,
   }) {
     return ExpenseModel(
       id: id ?? this.id,
@@ -46,6 +59,7 @@ class ExpenseModel extends HiveObject {
       category: category ?? this.category,
       date: date ?? this.date,
       note: note ?? this.note,
+      type: type ?? this.type,
     );
   }
 }

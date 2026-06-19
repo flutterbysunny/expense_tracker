@@ -15,7 +15,12 @@ class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
     try {
       final totals = repository.getCategoryTotals();
       final total = repository.getTotalAmount();
-      emit(SummaryLoaded(categoryTotals: totals, totalAmount: total));
+      final last7Days = repository.getLast7DaysTotals();
+      emit(SummaryLoaded(
+        categoryTotals: totals,
+        totalAmount: total,
+        last7DaysTotals: last7Days,
+      ));
     } catch (e) {
       emit(SummaryError(e.toString()));
     }

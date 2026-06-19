@@ -14,14 +14,18 @@ class SummaryLoading extends SummaryState {}
 class SummaryLoaded extends SummaryState {
   final Map<String, double> categoryTotals;
   final double totalAmount;
+  final Map<DateTime, double> last7DaysTotals;
+
 
   const SummaryLoaded({
     required this.categoryTotals,
     required this.totalAmount,
+    required this.last7DaysTotals,
+
   });
 
   @override
-  List<Object?> get props => [categoryTotals, totalAmount];
+  List<Object?> get props => [categoryTotals, totalAmount,last7DaysTotals];
 }
 
 class SummaryError extends SummaryState {

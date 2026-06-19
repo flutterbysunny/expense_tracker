@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'app_colors.dart';
 
 class CategoryData {
-  static const List<String> categories = [
+  static const List<String> expenseCategories = [
     'Food',
     'Transport',
     'Shopping',
@@ -10,6 +11,17 @@ class CategoryData {
     'Health',
     'Other',
   ];
+
+  static const List<String> incomeCategories = [
+    'Salary',
+    'Freelance',
+    'Investment',
+    'Gift',
+    'Other',
+  ];
+
+  // Backward-compatible alias used by older widgets
+  static const List<String> categories = expenseCategories;
 
   static IconData getIcon(String category) {
     switch (category) {
@@ -25,6 +37,14 @@ class CategoryData {
         return Icons.movie;
       case 'Health':
         return Icons.local_hospital;
+      case 'Salary':
+        return Icons.account_balance_wallet;
+      case 'Freelance':
+        return Icons.laptop_mac;
+      case 'Investment':
+        return Icons.trending_up;
+      case 'Gift':
+        return Icons.card_giftcard;
       default:
         return Icons.category;
     }
@@ -33,19 +53,24 @@ class CategoryData {
   static Color getColor(String category) {
     switch (category) {
       case 'Food':
-        return Colors.orange;
+        return AppColors.catFood;
       case 'Transport':
-        return Colors.blue;
+        return AppColors.catTransport;
       case 'Shopping':
-        return Colors.purple;
+        return AppColors.catShopping;
       case 'Bills':
-        return Colors.red;
+        return AppColors.catBills;
       case 'Entertainment':
-        return Colors.pink;
+        return AppColors.catEntertainment;
       case 'Health':
-        return Colors.green;
+        return AppColors.catHealth;
+      case 'Salary':
+      case 'Freelance':
+      case 'Investment':
+      case 'Gift':
+        return AppColors.income;
       default:
-        return Colors.grey;
+        return AppColors.catOther;
     }
   }
 }
