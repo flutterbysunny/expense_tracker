@@ -41,3 +41,11 @@ class FilterByCategory extends ExpenseEvent {
   @override
   List<Object?> get props => [category];
 }
+
+class SearchExpense extends ExpenseEvent {
+  final String query;
+  const SearchExpense(this.query);
+
+  @override
+  List<Object?> get props => [query];
+}

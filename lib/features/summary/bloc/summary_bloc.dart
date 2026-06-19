@@ -4,7 +4,7 @@ import 'summary_event.dart';
 import 'summary_state.dart';
 
 class SummaryBloc extends Bloc<SummaryEvent, SummaryState> {
-  final ExpenseRepository repository;
+  final IExpenseRepository repository;
 
   SummaryBloc(this.repository) : super(SummaryInitial()) {
     on<LoadSummary>(_onLoadSummary);

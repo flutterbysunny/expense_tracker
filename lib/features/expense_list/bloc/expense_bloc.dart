@@ -4,7 +4,7 @@ import 'expense_event.dart';
 import 'expense_state.dart';
 
 class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
-  final ExpenseRepository repository;
+  final IExpenseRepository repository;
 
   ExpenseBloc(this.repository) : super(ExpenseInitial()) {
     on<LoadExpenses>(_onLoadExpenses);
@@ -12,6 +12,8 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
     on<UpdateExpense>(_onUpdateExpense);
     on<DeleteExpense>(_onDeleteExpense);
     on<FilterByCategory>(_onFilterByCategory);
+    on<SearchExpense>(_onSearchExpense);
+
   }
 
   void _onLoadExpenses(LoadExpenses event, Emitter<ExpenseState> emit) {
@@ -65,6 +67,21 @@ class ExpenseBloc extends Bloc<ExpenseEvent, ExpenseState> {
         totalAmount: total,
         activeFilter: event.category,
       ));
+    } catch (e) {
+      emit(ExpenseError(e.toString()));
+    }
+  }
+  void _onSearchExpense(SearchExpense event, Emitter<ExpenseState> emit) {
+    try {
+      final query = event.query.trim().toLowerCase();
+      final allExpenses = repository.getAllExpenses();
+      final filtered = query.isEmpty
+          ? allExpenses
+          : allExpenses
+          .where((e) => e.title.toLowerCase().contains(query))
+          .toList();
+      final total = filtered.fold(0.0, (sum, e) => sum + e.amount);
+      emit(ExpenseLoaded(expenses: filtered, totalAmount: total));
     } catch (e) {
       emit(ExpenseError(e.toString()));
     }
